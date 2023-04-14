@@ -20,10 +20,10 @@ output_day = ""
 
 for i in 1..last_date do
   forcus_day = Date.new(input[:year], input[:month], i)
-  if forcus_day.wday == 0 then
+  if forcus_day.wday == 0
     output_day = output_day.rjust(20) + "\n"
 
-    if forcus_day.day == Date.today then
+    if forcus_day.day == Date.today
       output_day += "\e[47m#{i}\e[0m".rjust(2)
     end
     
@@ -32,7 +32,7 @@ for i in 1..last_date do
     next
   end
 
-  if forcus_day == Date.today then
+  if forcus_day == Date.today
     output_day += " \e[47m#{i}\e[0m"
     next
   end
