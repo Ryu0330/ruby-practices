@@ -1,9 +1,9 @@
 1.upto(20) do |i|
-  if i % 5 == 0 && i % 3 == 0 then
+  if i % 5 == 0 && i % 3 == 0
     puts "FizzBuzz"
-  elsif i % 5 == 0 then
+  elsif i % 5 == 0
     puts "Buzz"
-  elsif i % 3 == 0 then
+  elsif i % 3 == 0
     puts "Fizz"
   else 
     puts i
