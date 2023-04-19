@@ -10,7 +10,7 @@ def join_day_to_output_day(date, output_day, today_rjust_count, other_rjust_coun
 end
 
 opt = OptionParser.new
-input = {:year => Date.today.year, :month => Date.today.month}
+input = {year: Date.today.year, month: Date.today.month}
 
 opt.on("-y [VAL]", "--year [VAL]"){|v| v.to_i }
 opt.on("-m [VAL]", "--month [VAL]"){|v| v.to_i }
@@ -27,10 +27,12 @@ output_day = ""
 
 (first_date..last_date).each do |date|
   if date.sunday?
-    output_day = output_day.rjust(20) + "\n"
     output_day = join_day_to_output_day(date, output_day, 10, 2)
   else
     output_day = join_day_to_output_day(date, output_day, 11, 3)
+    if date.saturday?
+      output_day = output_day.rjust(20) + "\n"
+    end
   end
 end
 
