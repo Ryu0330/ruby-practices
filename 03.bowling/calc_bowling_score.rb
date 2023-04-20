@@ -1,23 +1,65 @@
-input_array = ARGV[0].split(",")
-input_array.map!(&:to_i)
+# frozen_string_literal: true
 
-p input_array
+require 'debug'
 
-# boolean変数でストライクとスペアかその他を判定して、trueならストライクかどうかで二投目の判定
-is_first_throw = True
-count_frame = 0
-is_knocked_down_all = False
-
+input_array = ARGV[0].split(',')
+shots = []
 input_array.each do |score|
-  count_frame += 1 if is_first_throw
-  if count_frame == 1 && is_first_throw = True
-    score_this_frame = score
-    is_first_throw = False
+  if score == 'X'
+    shots << 10 << nil
+  else
+    shots << score.to_i
+  end
+end
+
+frames = []
+shots.each_slice(2) do |score|
+  frames << score.compact
+end
+
+frames.each_with_index do |_, index|
+  frames[9].concat(frames[index]) if index >= 10
+end
+frames.slice!(10..frames.size)
+
+point = 0
+is_strike = false
+is_spare = false
+
+frames.each_with_index do |frame, index|
+  if is_spare == true
+    point += frame[0]
+    is_spare = false
+  end
+
+  if index == 9
+    if is_strike == true
+      point += frame[0] + frame[1]
+      is_strike = false
+    end
+    point += frame.sum
     next
   end
 
-  if count_frame = 10
+  if is_strike == true
+    if frame.size == 2
+      point += frame.sum
+    else
+      point += frame[0]
+      is_spare = true
+    end
+    is_strike = false
+  end
 
-  end 
+  if frame[0] == 10
+    point += frame[0]
+    is_strike = true
+  elsif frame.sum == 10
+    point += frame.sum
+    is_spare = true
+  else
+    point += frame.sum
+  end
+end
 
-puts result
+puts point
