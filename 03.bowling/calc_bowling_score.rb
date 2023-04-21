@@ -2,6 +2,19 @@
 
 require 'debug'
 
+def plus_next_two_shots(frame)
+  if frame.size >= 2
+    frame[0] + frame[1]
+  else
+    is_spare = true
+    frame[0]
+  end
+end
+
+def plus_next_shot(frame)
+  frame[0]
+end
+
 input_array = ARGV[0].split(',')
 shots = []
 input_array.each do |score|
@@ -28,26 +41,18 @@ is_spare = false
 
 frames.each_with_index do |frame, index|
   if is_spare == true
-    point += frame[0]
+    point += plus_next_shot(frame)
     is_spare = false
   end
 
   if index == 9
-    if is_strike == true
-      point += frame[0] + frame[1]
-      is_strike = false
-    end
+    point += plus_next_two_shots(frame) if is_strike == true
     point += frame.sum
-    next
+    break
   end
 
   if is_strike == true
-    if frame.size == 2
-      point += frame.sum
-    else
-      point += frame[0]
-      is_spare = true
-    end
+    point += plus_next_two_shots(frame)
     is_strike = false
   end
 
@@ -63,3 +68,4 @@ frames.each_with_index do |frame, index|
 end
 
 puts point
+
