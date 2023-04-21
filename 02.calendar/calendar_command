@@ -1,11 +1,17 @@
 require "optparse"
 require "date"
 
-def join_day_to_output_day(date, output_day, today_rjust_count, other_rjust_count)
-  if date == Date.today
-    output_day += "\e[7m#{Date.today.day}\e[0m".rjust(today_rjust_count)
+def format_date(date)
+  if date.sunday?
+    rjust_count = 2
   else
-    output_day += "#{date.day}".rjust(other_rjust_count)
+    rjust_count = 3
+  end
+
+  if date == Date.today
+    "\e[7m#{Date.today.day}\e[0m".rjust(rjust_count + 8)
+  else
+    "#{date.day}".rjust(rjust_count)
   end
 end
 
@@ -26,13 +32,10 @@ puts "日 月 火 水 木 金 土"
 output_day = ""
 
 (first_date..last_date).each do |date|
-  if date.sunday?
-    output_day = join_day_to_output_day(date, output_day, 10, 2)
-  else
-    output_day = join_day_to_output_day(date, output_day, 11, 3)
-    if date.saturday?
-      output_day = output_day.rjust(20) + "\n"
-    end
+  output_day += format_date(date)
+
+  if date.saturday?
+    output_day = output_day.rjust(20) + "\n"
   end
 end
 
