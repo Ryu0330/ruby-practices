@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
-require 'debug'
-
 def plus_next_two_shots(frame)
   if frame.size >= 2
     frame[0] + frame[1]
   else
-    is_spare = true
+    $is_spare = true
     frame[0]
   end
 end
 
 def plus_next_shot(frame)
+  $is_spare = false
   frame[0]
 end
 
@@ -37,12 +36,11 @@ frames.slice!(10..frames.size)
 
 point = 0
 is_strike = false
-is_spare = false
+$is_spare = false
 
 frames.each_with_index do |frame, index|
-  if is_spare == true
+  if $is_spare == true
     point += plus_next_shot(frame)
-    is_spare = false
   end
 
   if index == 9
@@ -61,11 +59,10 @@ frames.each_with_index do |frame, index|
     is_strike = true
   elsif frame.sum == 10
     point += frame.sum
-    is_spare = true
+    $is_spare = true
   else
     point += frame.sum
   end
 end
 
 puts point
-
