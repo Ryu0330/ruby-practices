@@ -1,47 +1,53 @@
 # frozen_string_literal: true
 
 class Result
-  @@score = 0
-  @@is_strike = false
-  @@is_spare = false
+  attr_writer :is_strike, :is_spare
+  attr_accessor :score
 
-  def self.is_strike
-    @@is_strike
+  def initialize
+    @score = 0
+    @is_strike = false
+    @is_spare = false
   end
 
-  def self.is_spare
-    @@is_spare
+  def strike?
+    @is_strike
   end
 
-  def self.score
-    @@score
+  def spare?
+    @is_spare
   end
 
-  def self.add_score(frame)
+  def check_is_bonus_and_add_score(frame)
+    check_strike_and_spare(frame)
+    add_score(frame)
+  end
+
+  def check_strike_and_spare(frame)
     if frame[0] == 10
-      @@score += frame[0]
-      @@is_strike = true
+      @is_strike = true
     elsif frame.sum == 10
-      @@score += frame.sum
-      @@is_spare = true
-    else
-      @@score += frame.sum
+      @is_spare = true
     end
   end
 
-  def self.plus_next_two_shots(frame)
+  def add_score(frame)
+    @score += frame.sum
+  end
+
+  def plus_next_two_shots(frame)
     if frame.size >= 2
-      @@score += frame[0] + frame[1]
+      @score += frame[0] + frame[1]
     else
-      @@score += frame[0]
-      @@is_spare = true
+      @score += frame[0]
+      @is_spare = true
     end
-    @@is_strike = false
+    @is_strike = false
   end
 
-  def self.plus_next_shot(frame)
-    @@score += frame[0]
-    @@is_spare = false
+  def plus_next_shot(frame)
+    @score += frame[0]
+    @is_spare = false
   end
 end
 
@@ -65,22 +71,19 @@ frames.each_with_index do |_, index|
 end
 frames.slice!(10..frames.size)
 
+result = Result.new
 frames.each_with_index do |frame, index|
-  if Result.is_spare == true
-    Result.plus_next_shot(frame)
-  end
+  result.plus_next_shot(frame) if result.spare?
 
   if index == 9
-    Result.plus_next_two_shots(frame) if Result.is_strike == true
-    Result.add_score(frame)
+    result.plus_next_two_shots(frame) if result.strike?
+    result.check_is_bonus_and_add_score(frame)
     break
   end
 
-  if Result.is_strike == true
-    Result.plus_next_two_shots(frame)
-  end
+  result.plus_next_two_shots(frame) if result.strike?
 
-  Result.add_score(frame)
+  result.check_is_bonus_and_add_score(frame)
 end
 
-puts Result.score
+puts result.score
