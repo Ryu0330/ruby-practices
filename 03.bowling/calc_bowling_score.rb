@@ -1,17 +1,48 @@
 # frozen_string_literal: true
 
-def plus_next_two_shots(frame)
-  if frame.size >= 2
-    frame[0] + frame[1]
-  else
-    $is_spare = true
-    frame[0]
-  end
-end
+class Result
+  @@score = 0
+  @@is_strike = false
+  @@is_spare = false
 
-def plus_next_shot(frame)
-  $is_spare = false
-  frame[0]
+  def self.is_strike
+    @@is_strike
+  end
+
+  def self.is_spare
+    @@is_spare
+  end
+
+  def self.score
+    @@score
+  end
+
+  def self.add_score(frame)
+    if frame[0] == 10
+      @@score += frame[0]
+      @@is_strike = true
+    elsif frame.sum == 10
+      @@score += frame.sum
+      @@is_spare = true
+    else
+      @@score += frame.sum
+    end
+  end
+
+  def self.plus_next_two_shots(frame)
+    if frame.size >= 2
+      @@score += frame[0] + frame[1]
+    else
+      @@score += frame[0]
+      @@is_spare = true
+    end
+    @@is_strike = false
+  end
+
+  def self.plus_next_shot(frame)
+    @@score += frame[0]
+    @@is_spare = false
+  end
 end
 
 input_array = ARGV[0].split(',')
@@ -34,35 +65,22 @@ frames.each_with_index do |_, index|
 end
 frames.slice!(10..frames.size)
 
-point = 0
-is_strike = false
-$is_spare = false
-
 frames.each_with_index do |frame, index|
-  if $is_spare == true
-    point += plus_next_shot(frame)
+  if Result.is_spare == true
+    Result.plus_next_shot(frame)
   end
 
   if index == 9
-    point += plus_next_two_shots(frame) if is_strike == true
-    point += frame.sum
+    Result.plus_next_two_shots(frame) if Result.is_strike == true
+    Result.add_score(frame)
     break
   end
 
-  if is_strike == true
-    point += plus_next_two_shots(frame)
-    is_strike = false
+  if Result.is_strike == true
+    Result.plus_next_two_shots(frame)
   end
 
-  if frame[0] == 10
-    point += frame[0]
-    is_strike = true
-  elsif frame.sum == 10
-    point += frame.sum
-    $is_spare = true
-  else
-    point += frame.sum
-  end
+  Result.add_score(frame)
 end
 
-puts point
+puts Result.score
