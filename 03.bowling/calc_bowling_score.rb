@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Result
-  attr_writer :is_strike, :is_spare
   attr_accessor :score
 
   def initialize
