@@ -52,23 +52,15 @@ class Result
 end
 
 input_array = ARGV[0].split(',')
-shots = []
-input_array.each do |score|
-  if score == 'X'
-    shots << 10 << nil
-  else
-    shots << score.to_i
-  end
-end
 
-frames = []
-shots.each_slice(2) do |score|
-  frames << score.compact
-end
+shots = input_array.map { |score| score == 'X' ? [10, nil] : score.to_i }.flatten
 
-frames.each_with_index do |_, index|
-  frames[9].concat(frames[index]) if index >= 10
-end
+frames = shots.each_slice(2).map(&:compact).to_a
+
+frames[9].concat(frames[10..].flatten)
+
+frames.pop(frames.size - 10)
+
 frames.slice!(10..frames.size)
 
 result = Result.new
