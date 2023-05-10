@@ -61,8 +61,6 @@ frames[9].concat(frames[10..].flatten)
 
 frames.pop(frames.size - 10)
 
-frames.slice!(10..frames.size)
-
 result = Result.new
 frames.each_with_index do |frame, index|
   result.plus_next_shot(frame) if result.spare?
