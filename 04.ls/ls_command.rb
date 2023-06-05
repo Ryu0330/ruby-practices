@@ -22,17 +22,17 @@ def format_to_show(files)
 
   column_width = sorted_files.max_by(&:length).length
 
-  formatted_strings = []
-  row_count.times do |row|
-    same_row_files = []
-    COLUMN_COUNT.times do |col|
-      target_filename = sorted_files[row + col * row_count].to_s
-      same_row_files << target_filename.ljust(column_width + 3)
+  rows = []
+  row_count.times do |row_idx|
+    columns = []
+    COLUMN_COUNT.times do |col_idx|
+      target_filename = sorted_files[row_idx + col_idx * row_count].to_s
+      columns << target_filename.ljust(column_width + 3)
     end
-    formatted_strings << same_row_files.join
+    rows << columns.join
   end
 
-  formatted_strings.join("\n")
+  rows.join("\n")
 end
 
 main
