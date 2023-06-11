@@ -1,9 +1,14 @@
 # frozen_string_literal: true
+require 'optparse'
 
 COLUMN_COUNT = 3
 
 def main
-  files = fetch_files
+  if is_a_option
+    
+  else
+    files = fetch_files
+  end
   puts format_to_show(files)
 end
 
@@ -13,6 +18,16 @@ end
 
 def dir_path
   ARGV[0] || '.'
+end
+
+def analyze_argv
+  opt = OptionParser.new
+  input = {}
+  opt.on('') {|v| input[path:] = v}
+  opt.on('-a') {|v| input[a:] = v}
+
+  opt.parse!(ARGV)
+  
 end
 
 def format_to_show(files)
