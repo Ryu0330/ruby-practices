@@ -5,11 +5,17 @@ COLUMN_COUNT = 3
 
 def main
   if is_a_option
-    
+    files = fetch_files
   else
     files = fetch_files
   end
   puts format_to_show(files)
+end
+
+def is_a_option
+  input_option = analyze_argv
+  p input_option[:]
+  input_option[:]
 end
 
 def fetch_files
@@ -23,18 +29,15 @@ end
 def analyze_argv
   opt = OptionParser.new
   input = {}
-  opt.on('') {|v| input[path:] = v}
+  opt.on('-') {|v| input[path:] = v}
   opt.on('-a') {|v| input[a:] = v}
 
   opt.parse!(ARGV)
-  
 end
 
 def format_to_show(files)
   sorted_files = files.sort
-
   row_count = (files.size / COLUMN_COUNT.to_f).ceil
-
   column_width = sorted_files.max_by(&:length).length
 
   rows = []
