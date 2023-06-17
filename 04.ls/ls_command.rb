@@ -1,31 +1,34 @@
 # frozen_string_literal: true
+
 require 'optparse'
 
 COLUMN_COUNT = 3
 
 def main
-  opt = OptionParser.new
-  is_a_option = false
-  opt.on('-a') { |v| is_a_option = v}
-  opt.parse!(ARGV)
-  p is_a_option
-  if is_a_option
-    p 'a option is true' 
-    files = fetch_files(option: 'a')
-  else
-    files = fetch_files
-  end
+  files = if a_option?
+            fetch_files(option: 'a')
+          else
+            fetch_files
+          end
   puts format_to_show(files)
 end
 
+def a_option?
+  has_a = false
+
+  opt = OptionParser.new
+  opt.on('-a') { |v| has_a = v }
+  opt.parse!(ARGV)
+
+  has_a
+end
+
 def fetch_files(option: '')
- case option
-  when '' then
+  case option
+  when ''
     Dir.foreach(dir_path).filter_map { |file| file unless file.start_with?('.') }
-  when 'a' then
-    p ARGV
-    p Dir.foreach(dir_path).each
-    Dir.foreach(dir_path).each
+  when 'a'
+    Dir.foreach(dir_path).map { |file| file }
   end
 end
 
