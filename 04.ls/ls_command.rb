@@ -8,9 +8,11 @@ def main
   options = load_options
   files = fetch_files
 
-  unless options.key?(:a)
-    files.filter! { |file| file unless file.start_with?('.') }
-  end
+  files = if options.key?(:a)
+            files
+          else
+            files.filter { |file| file unless file.start_with?('.') }
+          end
 
   files = if options.key?(:r)
             files.sort.reverse
