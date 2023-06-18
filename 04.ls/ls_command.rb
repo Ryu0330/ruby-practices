@@ -5,27 +5,36 @@ require 'optparse'
 COLUMN_COUNT = 3
 
 def main
-  files = if a_option?
+  options = load_options
+  files = if options.has_key?(:a)
             fetch_files(option: 'a')
+          elsif options.has_key?(:r)
+            fetch_files(option: 'r')
           else
             fetch_files
           end
-  puts format_to_show(files)
+  sorted_files = if options.has_key?(:r)
+                   files.sort.reverse
+                 else
+                   files.sort
+                 end
+  puts format_to_show(sorted_files)
 end
 
-def a_option?
-  has_a = false
+def load_options
+  options = {}
 
   opt = OptionParser.new
-  opt.on('-a') { |v| has_a = v }
+  opt.on('-a') { |v| options[:a] = v }
+  opt.on('-r') { |v| options[:r] = v }
   opt.parse!(ARGV)
 
-  has_a
+  options
 end
 
 def fetch_files(option: '')
   case option
-  when ''
+  when '', 'r'
     Dir.foreach(dir_path).filter_map { |file| file unless file.start_with?('.') }
   when 'a'
     Dir.foreach(dir_path).map { |file| file }
@@ -36,9 +45,8 @@ def dir_path
   ARGV[0] || '.'
 end
 
-def format_to_show(files)
-  sorted_files = files.sort
-  row_count = (files.size / COLUMN_COUNT.to_f).ceil
+def format_to_show(sorted_files)
+  row_count = (sorted_files.size / COLUMN_COUNT.to_f).ceil
   column_width = sorted_files.max_by(&:length).length
 
   rows = []
