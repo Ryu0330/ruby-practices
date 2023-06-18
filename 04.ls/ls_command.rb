@@ -6,19 +6,19 @@ COLUMN_COUNT = 3
 
 def main
   options = load_options
-  files = if options.has_key?(:a)
-            fetch_files(option: 'a')
-          elsif options.has_key?(:r)
-            fetch_files(option: 'r')
+  files = fetch_files
+
+  unless options.key?(:a)
+    files.filter! { |file| file unless file.start_with?('.') }
+  end
+
+  files = if options.key?(:r)
+            files.sort.reverse
           else
-            fetch_files
+            files.sort
           end
-  sorted_files = if options.has_key?(:r)
-                   files.sort.reverse
-                 else
-                   files.sort
-                 end
-  puts format_to_show(sorted_files)
+
+  puts format_to_show(files)
 end
 
 def load_options
@@ -32,28 +32,23 @@ def load_options
   options
 end
 
-def fetch_files(option: '')
-  case option
-  when '', 'r'
-    Dir.foreach(dir_path).filter_map { |file| file unless file.start_with?('.') }
-  when 'a'
-    Dir.foreach(dir_path).map { |file| file }
-  end
+def fetch_files
+  Dir.foreach(dir_path).map { |file| file }
 end
 
 def dir_path
   ARGV[0] || '.'
 end
 
-def format_to_show(sorted_files)
-  row_count = (sorted_files.size / COLUMN_COUNT.to_f).ceil
-  column_width = sorted_files.max_by(&:length).length
+def format_to_show(files)
+  row_count = (files.size / COLUMN_COUNT.to_f).ceil
+  column_width = files.max_by(&:length).length
 
   rows = []
   row_count.times do |row_idx|
     columns = []
     COLUMN_COUNT.times do |col_idx|
-      target_filename = sorted_files[row_idx + col_idx * row_count].to_s
+      target_filename = files[row_idx + col_idx * row_count].to_s
       columns << target_filename.ljust(column_width + 3)
     end
     rows << columns.join
