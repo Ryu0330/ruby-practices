@@ -6,21 +6,19 @@ COLUMN_COUNT = 3
 
 def main
   options = load_options
-  files = fetch_files
+  sorted_files = fetch_files.sort
 
-  files = if options.key?(:a)
-            files
-          else
-            files.filter { |file| file unless file.start_with?('.') }
-          end
+  filtered_files = if options.key?(:a)
+                     sorted_files
+                   else
+                     sorted_files.reject { |file| file.start_with?('.') }
+                   end
 
-  files = if options.key?(:r)
-            files.sort.reverse
-          else
-            files.sort
-          end
+  reversed_files = if options.key?(:r)
+                     filtered_files.reverse
+                   end
 
-  puts format_to_show(files)
+  puts format_to_show(reversed_files || filtered_files)
 end
 
 def load_options
@@ -35,7 +33,7 @@ def load_options
 end
 
 def fetch_files
-  Dir.foreach(dir_path).map { |file| file }
+  Dir.foreach(dir_path).to_a
 end
 
 def dir_path
